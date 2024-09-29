@@ -7,7 +7,7 @@ from PIL import Image  # Import for loading the image
 loaded_model = joblib.load(open('kmeans_model1.pkl', 'rb'))
 
 # Define the path to the cluster image
-image_path = r'C:\Users\shuja\.spyder-py3\Deploy Student Mental Health Cluster\cluster.png'
+image_path = 'cluster.png'
 
 def mental_health_prediction(input_data):
     # changing the input_data to numpy array
