@@ -1,9 +1,13 @@
 import numpy as np
 import joblib
 import streamlit as st
+from PIL import Image  # Import for loading the image
 
 # Loading the saved model in binary mode
 loaded_model = joblib.load(open('kmeans_model1.pkl', 'rb'))
+
+# Define the path to the cluster image
+image_path = r'C:\Users\shuja\.spyder-py3\Deploy Student Mental Health Cluster\cluster.png'
 
 def mental_health_prediction(input_data):
     # changing the input_data to numpy array
@@ -52,6 +56,10 @@ def main():
     if st.button('Mental Health Result'):
         diagnosis = mental_health_prediction([Fjob_services, Fjob_other, guardian_other, Medu, address_U, goout, G2])
         st.success(diagnosis)
-    
+        
+        # Display the cluster image
+        cluster_image = Image.open(image_path)
+        st.image(cluster_image, caption='Cluster Visualization', use_column_width=True)
+
 if __name__ == '__main__':
     main()
