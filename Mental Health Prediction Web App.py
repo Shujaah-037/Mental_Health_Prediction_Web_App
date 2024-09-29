@@ -1,10 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Sun Sep 29 16:57:08 2024
-
-@author: shuja
-"""
-
 import numpy as np
 import joblib
 import streamlit as st
@@ -12,20 +5,53 @@ import streamlit as st
 # Loading the saved model in binary mode
 loaded_model = joblib.load(open('kmeans_model1.pkl', 'rb'))
 
+def mental_health_prediction(input_data):
+    # changing the input_data to numpy array
+    input_data_as_numpy_array = np.asarray(input_data)
 
-# Top 7 features (example feature names)
-important_features = ['Fjob_services', 'Fjob_other', 'guardian_other', 'Medu', 'address_U', 'goout', 'G2']
+    # reshape the array as we are predicting for one instance
+    input_data_reshaped = input_data_as_numpy_array.reshape(1, -1)
 
-# Let user input the 7 key features
-st.title('Mental Health Status Prediction')
-user_input = {}
-for feature in important_features:
-    user_input[feature] = st.slider(f"Input your {feature}:", min_value=0, max_value=10, value=5)
+    # Perform the prediction
+    prediction = loaded_model.predict(input_data_reshaped)
+    
+    # Determine the cluster result
+    if prediction[0] == 0:
+        return 'The student belongs to Cluster 0'
+    elif prediction[0] == 1:
+        return 'The student belongs to Cluster 1'
+    elif prediction[0] == 2:
+        return 'The student belongs to Cluster 2'
+    elif prediction[0] == 3:
+        return 'The student belongs to Cluster 3'
+    elif prediction[0] == 4:
+        return 'The student belongs to Cluster 4'
+    else:
+        return 'The student belongs to Cluster 5'
 
-# Convert user input into a numpy array for the clustering model
-user_data = np.array([list(user_input.values())])
+def main():
+    # giving a title
+    st.title('Mental Health Prediction Web App')
 
-# Assuming 'kmeans_model' is your pre-trained clustering model
-user_cluster = loaded_model.predict(user_data)
+    # getting the input data from the user
+    try:
+        Fjob_services = float(st.text_input('Father’s job (Services) (e.g., -1.0 to 2.0)', value=0))
+        Fjob_other = float(st.text_input('Father’s job (Other) (e.g., -1.0 to 1.0)', value=0))
+        guardian_other = float(st.text_input('Guardian (Other) (e.g., -1.0 to 4.0)', value=0))
+        Medu = float(st.text_input('Mother’s education (e.g., -2.0 to 2.0)', value=0))
+        address_U = float(st.text_input('Address (Urban) (e.g., -2.0 to 0.6)', value=0))
+        goout = float(st.text_input('Social interaction (e.g., -1.5 to 1.5)', value=0))
+        G2 = float(st.text_input('Second Grade (e.g., -4.0 to 2.0)', value=0))
+    except ValueError:
+        st.error("Please enter valid numerical values.")
 
-st.write(f'The predicted cluster for this student is: Cluster {user_cluster[0]}')
+    # code for Prediction
+    diagnosis = ''
+    
+    # creating a button for Prediction
+    if st.button('Mental Health Result'):
+        diagnosis = mental_health_prediction([Fjob_services, Fjob_other, guardian_other, Medu, address_U, goout, G2])
+        st.success(diagnosis)
+    
+if __name__ == '__main__':
+    main()
